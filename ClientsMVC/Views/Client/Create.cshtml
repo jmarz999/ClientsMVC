@@ -1,0 +1,86 @@
+﻿@model ClientsMVC.Services.ClientService.Dto.CreateClientDto
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h4>Create Client</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form onsubmit="createClient(event)">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input id="cName" asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input id="cDate" asp-for="BirthDate" type="date" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Address Name</label>
+                <input type="text" id="address" class="form-control" />
+                <label class="control-label">Address Type</label>
+                <select type="text" id="type" class="form-control">
+                    <option value="1">Home</option>
+                    <option value="2">Weekend</option>
+                </select>
+                <button type="button" class="btn btn-primary mt-3" onclick="addAddressess()">Add Address</button>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        let addressess =[];
+
+        function addAddressess() {
+
+            let singleAddress = document.getElementById("address");
+            let addressType = document.getElementById("type");
+
+
+            let address = {
+                name: singleAddress.value,
+                type: parseInt(addressType.value),
+                clientId: 0
+            }
+
+            addressess.push(address);
+
+            toastr.success("New address has been added for this client.")
+            singleAddress.value = "";
+            addressType.value = "";
+        }
+
+        function createClient(event) {
+            event.preventDefault() //da ne se submitira formata odma
+
+            let clientName = document.getElementById("cName").value;
+            let clientBirthday = document.getElementById("cDate").value;
+
+            axios.post('/Client/Create', {
+                addressess: addressess,
+                name: clientName,
+                birthDate: clientBirthday
+            })
+            .then(function (response) {
+                    window.location.href = '/Client/Index'
+            })
+            .catch(error => {
+                console.log(error);
+            })
+        }
+    </script>
+}
